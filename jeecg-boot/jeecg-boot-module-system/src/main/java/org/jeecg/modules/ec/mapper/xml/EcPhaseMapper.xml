@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.ec.mapper.EcPhaseMapper">
+
+    <select id="getAllPlansOfPhaseByPhaseId" resultType="org.jeecg.modules.ec.vo.EcPlanVo">
+        select ep.id, ep.name, ep.description
+        from ec_plan_phase epp
+        inner join ec_plan ep on epp.plan_id = ep.id and epp.phase_id = #{phaseId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getExergyFactorDetailByPhaseTypeAndPlanId"
+            resultType="org.jeecg.modules.ec.vo.EcExergyFactorDetailRespVo">
+        select eefd.id, eefd.name, eefd.description, eefd.exergy_id
+        from (
+                 select epef.exergy_factor_detail_id
+                 from (
+                          select ep.id as phase_id
+                          from ec_plan_phase epp
+                                   inner join ec_phase ep on epp.phase_id = ep.id and ep.phase_type = #{phaseType} and epp.plan_id = #{planId}
+                      ) tb1
+                          inner join ec_phase_exergy_factor epef on tb1.phase_id = epef.phase_id
+                 ) tb2, ec_exergy_factor_detail eefd
+        where tb2.exergy_factor_detail_id = eefd.id
+        order by eefd.create_time asc
+    </select>
+
+</mapper>

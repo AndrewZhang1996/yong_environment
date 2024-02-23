@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.ec.mapper.EcFactorMapper">
+
+    <select id="getAllFactorsByExergyFactorDetailId" resultType="org.jeecg.modules.ec.vo.EcExergyFactorRespVo">
+        select ef.id as factorId, ef.name, ef.description, ef.unit, ef.value, ee.id as exergyId, concat(ee.name, ' (', round(ee.value, 2), ' ', ee.unit, ')') as exergyName
+        from (
+                 select eef.factor_id, eef.exergy_id
+                 from ec_exergy_factor_detail eefd
+                          inner join ec_exergy_factor eef on eefd.id = eef.exergy_factor_detail_id and eefd.id = #{exergyFactorDetailId}
+                 ) tb1
+        left join ec_factor ef on tb1.factor_id = ef.id
+        left join ec_exergy ee on tb1.exergy_id = ee.id
+        order by ef.create_time asc
+    </select>
+    <select id="selectFactorsByDetailId" resultType="org.jeecg.modules.ec.entity.EcFactorHis">
+        select concat(eeh.name, ' (', round(eeh.value, 2), ' ', eeh.unit, ')') as exergyName, concat(efh.name, ' (', round(efh.value, 2), ' ', efh.unit, ')') as factorName,round(eeh.value * efh.value, 2) as value
+        from (select * from ec_exergy_factor_his eef where eef.exergy_factor_detail_id = #{id}) eefh
+            left join ec_factor_his efh on efh.id = eefh.factor_id
+            left join ec_exergy_his eeh on eeh.id = eefh.exergy_id
+        order by eefh.create_time asc
+    </select>
+
+</mapper>

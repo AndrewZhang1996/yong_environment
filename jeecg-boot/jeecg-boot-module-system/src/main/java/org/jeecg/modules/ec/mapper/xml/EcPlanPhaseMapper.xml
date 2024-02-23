@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.ec.mapper.EcPlanPhaseMapper">
+
+    <select id="selectPhaseListByPlanId" resultType="org.jeecg.modules.ec.entity.EcPhase">
+        select ep.*
+        from ec_plan_phase epp
+        inner join ec_phase ep on epp.phase_id = ep.id and epp.plan_id = #{planId,jdbcType=VARCHAR}
+        order by ep.phase_type asc
+    </select>
+    <select id="selectPhaseByPlanIdAndPhaseType" resultType="org.jeecg.modules.ec.entity.EcPhase">
+        select eph.*
+        from (
+                 select epp.phase_id
+                 from ec_plan ep
+                          inner join ec_plan_phase epp on ep.id = epp.plan_id and ep.id = #{planId}
+                 ) tb1
+        inner join ec_phase eph on eph.phase_type = #{phaseType} and tb1.phase_id = eph.id
+    </select>
+</mapper>

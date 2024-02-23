@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.ec.mapper.EcPhaseExergyFactorMapper">
+
+    <select id="selectEcExergyFactorDetailListByPhaseId" resultType="org.jeecg.modules.ec.entity.EcExergyFactorDetail">
+        select eefd.*
+        from ec_phase_exergy_factor epef
+                 inner join ec_exergy_factor_detail eefd on epef.exergy_factor_detail_id = eefd.id and epef.phase_id = #{phaseId,jdbcType=VARCHAR}
+    </select>
+    <select id="selectRelatedPlanIdListByExergyFactorDetailId" resultType="java.lang.String">
+        select distinct epp.plan_id
+        from ec_phase_exergy_factor epef, ec_plan_phase epp
+        where epef.exergy_factor_detail_id = #{id} and epef.phase_id = epp.phase_id
+    </select>
+</mapper>
